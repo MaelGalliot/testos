@@ -16,7 +16,7 @@
  */
 void init_user_task(int task_number, task_t * task, void * user_code, uint32_t addr_data, uint32_t addr_code, uint32_t addr_stack_user, uint32_t addr_kernel_stack){
   debug("[%s] to [%p - %p] \n",__func__,addr_data,addr_kernel_stack);
-
+  init_pgd_task(task_number);
   memcpy((char *) addr_code, &user_code, PAGE_SIZE);    /* Copy the user code to section code of task */
 
   task->addr_task_data  = addr_data;
@@ -26,7 +26,12 @@ void init_user_task(int task_number, task_t * task, void * user_code, uint32_t a
   task->cs_task         = c3_sel;
   task->ss_task         = d3_sel;
   task->flags_task      = get_flags();
-  task->cr3             = init_pgd_task(task_number);
+  if(task_number==1)
+    task->cr3 = (pde32_t *) ADDR_PGD_USER1;
+  else
+    task->cr3 = (pde32_t *) ADDR_PGD_USER2;
+
+  
 }
 
 /*
@@ -37,7 +42,7 @@ void tss_change_s0_esp(uint32_t esp_of_current_task){
   tss.s0.esp = esp_of_current_task; /* Update ebp */
 }
 
-uint32_t init_pgd_task(int user){
+void init_pgd_task(int user){
   int i;
   pde32_t * pgd;
   pde32_t * ptb0;
@@ -131,8 +136,6 @@ uint32_t init_pgd_task(int user){
     pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_KRN | PG_RW, pg_4K_nr((int)pte_task_ptb_user));//0x617000
     debug("PGD [%s] to [%p - %p] \n",__func__,ADDR_PGD_USER2,ADDR_PTB_USER2);
   }
-
-  return (uint32_t) pgd;
 }
 
 

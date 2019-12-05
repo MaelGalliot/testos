@@ -3,7 +3,7 @@
       
 #include <types.h>
 #include <map_of_mem.h>
-
+#include <pagemem.h>
 /* Struct of task */
 typedef struct task_t {
   uint32_t user_stack;
@@ -13,12 +13,12 @@ typedef struct task_t {
   uint32_t cs_task;
   uint32_t ss_task;
   uint32_t flags_task;
-  uint32_t cr3;
+  pde32_t * cr3;
 } __attribute__((packed)) task_t;
 
 /* Functions of task.c */
 void init_user_task(int number_task,task_t * task, void * user_code, uint32_t addr_data, uint32_t addr_code, uint32_t addr_stack_user, uint32_t addr_kernel_stack);
-uint32_t init_pgd_task(int user);
+void init_pgd_task(int user);
 void tss_change_s0_esp(uint32_t esp_of_current_task);
 void user1(void);
 void user2(void);

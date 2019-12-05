@@ -1,3 +1,0 @@
-target remote :1234
-b tss_change_s0_esp 
-c
