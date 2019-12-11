@@ -97,7 +97,7 @@ void launch_task(task_t *task){
   tss_change_s0_esp(task->kernel_stack);
   set_cr3((uint32_t)task->cr3);
   debug("tezst\n");
-  display_pgd();
+//  display_pgd();
   debug("tezst\n");
   asm volatile (
       "mov %0,%%esp  \n" // On met à jour la stack kernel user1
@@ -107,15 +107,16 @@ void launch_task(task_t *task){
       "push %3 \n" //On push EFLAGS
       "push %4 \n" //On push CS
       "push %5 \n" //On push EIP
+      "pusha\n"
       "popa \n"
       "iret"
       ::
-       "r"(task->kernel_stack),
-       "r"(task->ss_task),
-       "r"(task->user_stack),
-       "r"(task->flags_task),
-       "r"(task->cs_task),
-       "r"(task->addr_task_code)
+       "m"(task->kernel_stack),
+       "m"(task->ss_task),
+       "m"(task->user_stack),
+       "m"(task->flags_task),
+       "m"(task->cs_task),
+       "m"(task->addr_task_code)
       );
 }
 

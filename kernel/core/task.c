@@ -68,72 +68,45 @@ void init_pgd_task(int user){
     pg_set_entry(&ptb0[i],PG_KRN|PG_RW,i);
   }
 
-  pg_set_entry(&pgd[0],PG_KRN|PG_RW, page_nr(&ptb0[0]));      /* PDE - [0x000000 - 0x400000] */
+  pg_set_entry(&pgd[0],PG_USR|PG_RW, page_nr(&ptb0[0]));      /* PDE - [0x000000 - 0x400000] */
   pg_set_entry(&pgd[1],PG_USR|PG_RW, page_nr(&ptb_user[0]));      /* PDE - [0x000000 - 0x400000] */
 
-    pte32_t * pte_task_data_user; 
-    pte32_t * pte_task_code_user; 
-    pte32_t * pte_task_stack_user; 
-    pte32_t * pte_task_stack_kernel_user; 
-
-    pte32_t * pte_task_pgd; 
-    pte32_t * pte_task_ptb_krn; 
-    pte32_t * pte_task_ptb_user; 
-  if(user==1){
-    pte_task_data_user = (pte32_t *)ADDR_TASK_USER1_DATA;
-    pte_task_code_user = (pte32_t *)ADDR_TASK_USER1_CODE;
-    pte_task_stack_user = (pte32_t *)ADDR_TASK_USER1_STACK_USER;
-    pte_task_stack_kernel_user = (pte32_t *)ADDR_TASK_USER1_STACK_KERNEL;
-
-    pte_task_pgd = (pte32_t *)ADDR_PGD_USER1;
-    pte_task_ptb_krn = (pte32_t *)ADDR_PTB_KRN_USER1;
-    pte_task_ptb_user = (pte32_t *)ADDR_PTB_USER1;
-  } else {
-    pte_task_data_user = (pte32_t *)ADDR_TASK_USER2_DATA;
-    pte_task_code_user = (pte32_t *)ADDR_TASK_USER2_CODE;
-    pte_task_stack_user = (pte32_t *)ADDR_TASK_USER2_STACK_USER;
-    pte_task_stack_kernel_user = (pte32_t *)ADDR_TASK_USER2_STACK_KERNEL;
-
-    pte_task_pgd = (pte32_t *)ADDR_PGD_USER2;
-    pte_task_ptb_krn = (pte32_t *)ADDR_PTB_KRN_USER2;
-    pte_task_ptb_user = (pte32_t *)ADDR_PTB_USER2;
-  }
 
   if(user==1){
     //Mapping of share data user1/user2
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_USR | PG_RW, pg_4K_nr((int)pte_task_data_user));//0x601000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_TASK_USER1_DATA)], PG_USR | PG_RW, pg_4K_nr(ADDR_TASK_USER1_DATA));//0x601000
     
     //Mapping of code user1
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_USR | PG_RO, pg_4K_nr((int)pte_task_code_user));//0x602000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_TASK_USER1_CODE)], PG_USR | PG_RO, pg_4K_nr(ADDR_TASK_USER1_CODE));//0x602000
 
     //Mapping of stack user1 
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_USR | PG_RW, pg_4K_nr((int)pte_task_stack_user));//0x603000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_TASK_USER1_STACK_USER)], PG_USR | PG_RW, pg_4K_nr(ADDR_TASK_USER1_STACK_USER));//0x603000
 
     //Mapping of stack kernel user1
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_KRN | PG_RW, pg_4K_nr((int)pte_task_stack_kernel_user));//0x604000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_TASK_USER1_STACK_KERNEL)], PG_KRN | PG_RW, pg_4K_nr(ADDR_TASK_USER1_STACK_KERNEL));//0x604000
 
     //Mapping PGD
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_KRN | PG_RW, pg_4K_nr((int)pte_task_pgd));//0x605000
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_KRN | PG_RW, pg_4K_nr((int)pte_task_ptb_krn));//0x606000
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_KRN | PG_RW, pg_4K_nr((int)pte_task_ptb_user));//0x607000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_PGD_USER1)], PG_USR | PG_RW, pg_4K_nr((int)ADDR_PGD_USER1));//0x605000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_PTB_KRN_USER1)], PG_USR | PG_RW, pg_4K_nr((int)ADDR_PTB_KRN_USER1));//0x606000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_PTB_USER1)], PG_USR | PG_RW, pg_4K_nr((int)ADDR_PTB_USER1));//0x607000
     debug("PGD [%s] to [%p - %p] \n",__func__,ADDR_PGD_USER1,ADDR_PTB_USER1);
   } else {
     //Mapping of share data user1/user2
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_USR | PG_RW, pg_4K_nr((int)pte_task_data_user));//0x601000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_TASK_USER2_DATA)], PG_USR | PG_RW, pg_4K_nr((int)ADDR_TASK_USER2_DATA));//0x601000
     
     //Mapping of code user1
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_USR | PG_RO, pg_4K_nr((int)pte_task_code_user));//0x612000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_TASK_USER2_CODE)], PG_USR | PG_RO, pg_4K_nr((int)ADDR_TASK_USER2_CODE));//0x612000
 
     //Mapping of stack user1 
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_USR | PG_RW, pg_4K_nr((int)pte_task_stack_user));//0x613000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_TASK_USER2_STACK_USER)], PG_USR | PG_RW, pg_4K_nr((int)ADDR_TASK_USER2_STACK_USER));//0x613000
 
     //Mapping of stack kernel user1
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_KRN | PG_RW, pg_4K_nr((int)pte_task_stack_kernel_user));//0x614000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_TASK_USER2_STACK_KERNEL)], PG_KRN | PG_RW, pg_4K_nr((int)ADDR_TASK_USER2_STACK_KERNEL));//0x614000
 
     //Mapping PGD
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_KRN | PG_RW, pg_4K_nr((int)pte_task_pgd));//0x615000
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_KRN | PG_RW, pg_4K_nr((int)pte_task_ptb_krn));//0x616000
-    pg_set_entry(&ptb_user[pt32_idx(pte_task_data_user)], PG_KRN | PG_RW, pg_4K_nr((int)pte_task_ptb_user));//0x617000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_PGD_USER2)], PG_USR | PG_RW, pg_4K_nr((int)ADDR_PGD_USER2));//0x615000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_PTB_KRN_USER2)], PG_USR | PG_RW, pg_4K_nr((int)ADDR_PTB_KRN_USER2));//0x616000
+    pg_set_entry(&ptb_user[pt32_idx(ADDR_PTB_USER2)], PG_USR | PG_RW, pg_4K_nr((int)ADDR_PTB_USER2));//0x617000
     debug("PGD [%s] to [%p - %p] \n",__func__,ADDR_PGD_USER2,ADDR_PTB_USER2);
   }
 }
