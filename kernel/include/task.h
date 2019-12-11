@@ -17,7 +17,7 @@ typedef struct task_t {
 } __attribute__((packed)) task_t;
 
 /* Functions of task.c */
-void init_user_task(int number_task,task_t * task, void * user_code, uint32_t addr_data, uint32_t addr_code, uint32_t addr_stack_user, uint32_t addr_kernel_stack);
+void init_user_task(int number_task,task_t * task, uint32_t addr_data, uint32_t addr_code, uint32_t addr_stack_user, uint32_t addr_kernel_stack);
 void init_pgd_task(int user);
 void tss_change_s0_esp(uint32_t esp_of_current_task);
 void user1(void);

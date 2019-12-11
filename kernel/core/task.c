@@ -14,10 +14,9 @@
  * | USTACK | <-- 0x808000 
  * | KSTACK | <-- 0x809000 
  */
-void init_user_task(int task_number, task_t * task, void * user_code, uint32_t addr_data, uint32_t addr_code, uint32_t addr_stack_user, uint32_t addr_kernel_stack){
+void init_user_task(int task_number, task_t * task, uint32_t addr_data, uint32_t addr_code, uint32_t addr_stack_user, uint32_t addr_kernel_stack){
   debug("[%s] to [%p - %p] \n",__func__,addr_data,addr_kernel_stack);
   init_pgd_task(task_number);
-  memcpy((char *) addr_code, &user_code, PAGE_SIZE);    /* Copy the user code to section code of task */
 
   task->addr_task_data  = addr_data;
   task->addr_task_code  = addr_code;
@@ -115,7 +114,7 @@ void init_pgd_task(int user){
 /*
  * First user task who counts
  */
-void user1(){
+void __attribute__((section(".user1"))) user1(){
   //int * counter=(int *)ADDR_TASK_USER1_DATA;
   while(1){
     //*counter+=1;
@@ -126,7 +125,7 @@ void user1(){
 /*
  * Second user task who display counter
  */
-void user2(){
+void __attribute__((section(".user2"))) user2(){
   while(1){
     //asm volatile("int $48"::"S"("test\n")); 
   };
